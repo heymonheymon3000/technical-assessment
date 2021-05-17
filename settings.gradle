@@ -1,0 +1,4 @@
+include ':common'
+include ':ble-mailbox-peripheral'
+include ':ble-mailbox-central'
+rootProject.name = "Technical Assessment"
