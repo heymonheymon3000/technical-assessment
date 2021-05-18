@@ -653,7 +653,7 @@ object ConnectionManager {
         }
     }
 
-    private fun getLockerStatusButtonText(lStatus: String) : String {
+    fun getLockerStatusButtonText(lStatus: String) : String {
         return if(lStatus == "LOCKED") {
             "MAILBOX LOCKED"
         } else {
@@ -661,7 +661,7 @@ object ConnectionManager {
         }
     }
 
-    private fun getAuthStatus(lStatus: String) : Boolean {
+    fun getAuthStatus(lStatus: String) : Boolean {
         return lStatus != "ACCESS DENIED"
     }
 

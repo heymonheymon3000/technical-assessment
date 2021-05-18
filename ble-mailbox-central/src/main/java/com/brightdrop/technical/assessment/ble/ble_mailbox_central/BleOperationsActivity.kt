@@ -10,6 +10,8 @@ import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.CHARACTERISTIC_AUTH_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.CHARACTERISTIC_LOCKER_UUID
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -51,7 +53,6 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
             title = getString(R.string.ble_playground)
         }
 
-        toggle_btn.text = ConnectionManager.lockerState
         toggle_btn.setOnClickListener {
             CoroutineScope(IO).launch {
                 if(ConnectionManager.authState) {
@@ -62,11 +63,8 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                     delay(500)
                     ConnectionManager.readLockerCharacteristic(device)
-                    withContext(Main) {
-                        toggle_btn.text = ConnectionManager.lockerState
-                    }
                 } else {
-                    Log.i("Terry", "You are not auth!!!")
+                    log("You are not auth!!!")
                 }
             }
         }
@@ -126,10 +124,17 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
-        CoroutineScope(Main).launch {
-            toggle_btn.text = ConnectionManager.lockerState
+        CoroutineScope(IO).launch {
+            delay(500)
+            withContext(Main){
+                if(ConnectionManager.authState){
+                    auth.text = "BBBBB"
+                    auth.visibility = View.GONE
+                }
+            }
         }
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
@@ -168,6 +173,18 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             onCharacteristicRead = { _, characteristic ->
                 log("Read from ${characteristic.uuid}: ${String(characteristic.value)}")
+                if( characteristic.uuid ==  CHARACTERISTIC_LOCKER_UUID ) {
+                    ConnectionManager.lockerState = ConnectionManager.getLockerStatusButtonText(String(characteristic.value))
+                    CoroutineScope(Main).launch {
+                        toggle_btn.text = ConnectionManager.lockerState
+                    }
+                } else if( characteristic.uuid ==  CHARACTERISTIC_AUTH_LOCKER_UUID ) {
+                    ConnectionManager.authState = ConnectionManager.getAuthStatus(String(characteristic.value))
+                    CoroutineScope(Main).launch {
+                        auth.visibility = View.GONE
+                        toggle_btn.isEnabled = true
+                    }
+                }
             }
 
             onCharacteristicWrite = { _, characteristic ->
