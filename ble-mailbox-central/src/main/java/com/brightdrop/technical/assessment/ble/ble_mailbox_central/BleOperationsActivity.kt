@@ -166,9 +166,11 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 } else if( characteristic.uuid ==  CHARACTERISTIC_AUTH_LOCKER_UUID ) {
                     ConnectionManager.authState = ConnectionManager.getAuthStatus(String(characteristic.value))
-                    CoroutineScope(Main).launch {
-                        auth.visibility = View.GONE
-                        toggle_btn.isEnabled = true
+                    if(String(characteristic.value) != "ACCESS_DENIED") {
+                        CoroutineScope(Main).launch {
+                            auth.visibility = View.GONE
+                            toggle_btn.isEnabled = true
+                        }
                     }
                 }
             }
