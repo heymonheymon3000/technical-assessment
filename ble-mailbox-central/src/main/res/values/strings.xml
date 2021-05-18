@@ -4,4 +4,6 @@
     <string name="mailbox_locked">MAILBOX LOCKED</string>
     <string name="mailbox_unlocked">MAILBOX UNLOCKED</string>
     <string name="log">Log</string>
+    <string name="passcode_is_1234">Passcode is 1234</string>
+    <string name="enter_in_passcode">Enter in Passcode:</string>
 </resources>

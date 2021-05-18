@@ -13,6 +13,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.*
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.LOCKER_SERVICE_UUID
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +31,8 @@ private const val GATT_MAX_MTU_SIZE = 517
 
 val CHARACTERISTIC_LOCKER_UUID: UUID = UUID.fromString("31517c58-66bf-470c-b662-e352a6c80cba")
 val CLIENT_CONFIG_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
+val CHARACTERISTIC_AUTH_LOCKER_UUID: UUID = UUID.fromString("31517c59-66bf-470c-b662-e352a6c80cba")
+
 private var longitude: Double = -84.387985
 private var latitude: Double = 33.748997
 
@@ -40,6 +43,13 @@ object ConnectionManager {
     private var pendingOperation: BleOperationType? = null
 
     var lockerState: String by Delegates.observable("MAILBOX LOCKED") {
+            property, oldValue, newValue ->
+        println("${property.name}: $oldValue -> $newValue")
+
+        Log.i("Terry", "${property.name}: $oldValue -> $newValue")
+    }
+
+    var authState: Boolean by Delegates.observable(false) {
             property, oldValue, newValue ->
         println("${property.name}: $oldValue -> $newValue")
     }
@@ -188,6 +198,23 @@ object ConnectionManager {
         }
     }
 
+
+    fun readLockerCharacteristic(device: BluetoothDevice) {
+        if (device.isConnected()) {
+            val gatt : BluetoothGatt? = deviceGattMap[device]
+            val characteristic = gatt
+                ?.getService(LOCKER_SERVICE_UUID)
+                ?.getCharacteristic(CHARACTERISTIC_LOCKER_UUID)
+            characteristic?.uuid?.let {
+                if(!gatt.readCharacteristic(characteristic)) {
+                    Timber.e("failed request read locker!")
+                }
+            }
+        } else {
+            Timber.e("Not connected to ${device.address}, cannot request Locker update!")
+        }
+    }
+
     fun writeLockerCharacteristic(device: BluetoothDevice, lockerState: String) {
         if (device.isConnected()) {
             val gatt : BluetoothGatt? = deviceGattMap[device]
@@ -197,10 +224,47 @@ object ConnectionManager {
             characteristic?.uuid?.let {
                 characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
                 characteristic.value = lockerState.toByteArray()
-                gatt.writeCharacteristic(characteristic)
+
+                if(!gatt.writeCharacteristic(characteristic)) {
+                    Timber.e("failed request locker write!")
+                }
+
             }
         } else {
             Timber.e("Not connected to ${device.address}, cannot request Locker update!")
+        }
+    }
+
+    fun writeAuthCharacteristic(device: BluetoothDevice, passcode: String) {
+        if (device.isConnected()) {
+            val gatt : BluetoothGatt? = deviceGattMap[device]
+            val characteristic = gatt
+                ?.getService(LOCKER_SERVICE_UUID)
+                ?.getCharacteristic(CHARACTERISTIC_AUTH_LOCKER_UUID)
+            characteristic?.uuid?.let {
+                characteristic.writeType = BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+                characteristic.value = passcode.toByteArray()
+
+                if(!gatt.writeCharacteristic(characteristic)) {
+                    Timber.e("failed request auth write!")
+                }
+            }
+        } else {
+            Timber.e("Not connected to ${device.address}, cannot request auth update!")
+        }
+    }
+
+    fun readAuthCharacteristic(device: BluetoothDevice) {
+        if (device.isConnected()) {
+            val gatt : BluetoothGatt? = deviceGattMap[device]
+            val characteristic = gatt
+                ?.getService(LOCKER_SERVICE_UUID)
+                ?.getCharacteristic(CHARACTERISTIC_AUTH_LOCKER_UUID)
+            characteristic?.uuid?.let {
+                gatt.readCharacteristic(characteristic)
+            }
+        } else {
+            Timber.e("Not connected to ${device.address}, cannot request auth update!")
         }
     }
 
@@ -385,11 +449,19 @@ object ConnectionManager {
                         .getService(LOCKER_SERVICE_UUID)
                         .getCharacteristic(CHARACTERISTIC_LOCKER_UUID)
 
+                    val authCharacteristic = gatt
+                        .getService(LOCKER_SERVICE_UUID)
+                        .getCharacteristic(CHARACTERISTIC_AUTH_LOCKER_UUID)
+
                     CoroutineScope(IO).launch {
                         gatt.readCharacteristic(characteristic)
                     }
+
                     enableNotifications(device, characteristic)
                     writeDescriptor(device, characteristic.getDescriptor(CLIENT_CONFIG_UUID), BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
+
+                    enableNotifications(device, authCharacteristic)
+                    writeDescriptor(device, authCharacteristic.getDescriptor(CLIENT_CONFIG_UUID), BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)
 
                     listeners.forEach { it.get()?.onConnectionSetupComplete?.invoke(this) }
                 } else {
@@ -421,7 +493,12 @@ object ConnectionManager {
                 when (status) {
                     BluetoothGatt.GATT_SUCCESS -> {
                         Timber.i("Read characteristic $uuid | value: ${value.toHexString()}")
-                        lockerState = getLockerStatusButtonText(String(value))
+                        if(characteristic.uuid == CHARACTERISTIC_LOCKER_UUID) {
+                            lockerState = getLockerStatusButtonText(String(value))
+                        } else if(characteristic.uuid == CHARACTERISTIC_AUTH_LOCKER_UUID) {
+                            authState = getAuthStatus(String(value))
+                        }
+
                         listeners.forEach { it.get()?.onCharacteristicRead?.invoke(gatt.device, this) }
                     }
                     BluetoothGatt.GATT_READ_NOT_PERMITTED -> {
@@ -470,8 +547,11 @@ object ConnectionManager {
             with(characteristic) {
                 Timber.i("Characteristic $uuid changed | value: ${value.toHexString()}")
 
-                lockerState = getLockerStatusButtonText(String(value))
-
+                if(characteristic.uuid == CHARACTERISTIC_LOCKER_UUID) {
+                    lockerState = getLockerStatusButtonText(String(value))
+                } else if(characteristic.uuid == CHARACTERISTIC_AUTH_LOCKER_UUID) {
+                    authState = getAuthStatus(String(value))
+                }
                 listeners.forEach { it.get()?.onCharacteristicChanged?.invoke(gatt.device, this) }
             }
         }
@@ -579,6 +659,10 @@ object ConnectionManager {
         } else {
             "MAILBOX UNLOCKED"
         }
+    }
+
+    private fun getAuthStatus(lStatus: String) : Boolean {
+        return lStatus != "ACCESS DENIED"
     }
 
     private val broadcastReceiver = object : BroadcastReceiver() {

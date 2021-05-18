@@ -14,7 +14,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -32,13 +31,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ToggleButton
-            android:id="@+id/lockerState_toggle_btn"
-            android:text="@string/mailbox_locked"
-            android:textOn="@string/mailbox_unlocked"
-            android:textOff="@string/mailbox_locked"
+        <Button
+            android:id="@+id/auth"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Sign In"
+            />
+
+        <EditText
+            android:id="@+id/editTextResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </EditText>
+
+<!--        <ToggleButton-->
+<!--            android:id="@+id/lockerState_toggle_btn"-->
+<!--            android:text="@string/mailbox_locked"-->
+<!--            android:textOn="@string/mailbox_unlocked"-->
+<!--            android:textOff="@string/mailbox_locked"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content" />-->
+
+        <Button
+            android:id="@+id/toggle_btn"
+            android:text="@string/mailbox_locked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
