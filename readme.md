@@ -29,6 +29,9 @@ To get a local copy up and running follow the steps below.
 
 
 ### APK's
+<a href="apks/ble-mailbox-central-debug.apk" download>Click to Download ble-mailbox-central</a>
+
+<a href="apks/ble-mailbox-peripheral-debug.apk" download>Click to Download ble-mailbox-perpheral</a>
 
 
 ## Screen shots
