@@ -34,6 +34,7 @@ To get a local copy up and running follow the steps below.
 ![](docs/uml/sequence_diagram.png "Sequence Diagram")
 
 
+
 ## UML Diagrams
 #### Sequence Diagram
 ![](docs/uml/sequence_diagram.png "Sequence Diagram")
