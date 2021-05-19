@@ -28,7 +28,7 @@ To get a local copy up and running follow the steps below.
 ### Assumptions
 * When scanning, filter results to my mailbox only.
 * For the ble-mailbox-central use any device Android 10 or lower, it seems like it does pick up devices
-* Based on the instructions it looks I need to show the location of the user not track the location of EP1
+* Based on the instructions it looks like I need to show the location of the user not track the location of EP1
 
 ## Screen shots
 
