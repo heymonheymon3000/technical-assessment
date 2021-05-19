@@ -1,0 +1,237 @@
+@startuml
+'https://plantuml.com/class-diagram
+class BleOperationsActivity {
+    -BluetoothDevice device:
+    -SimpleDateFormat dateFormatter
+    -List UUID
+    -String authenticationFormat
+    -connectionEventListener
+    +onCreate()
+    +onDestroy()
+    +onOptionsItemSelected()
+    +log()
+
+}
+
+class GpsTracker {
+    +Boolean isGPSEnabled
+    +Boolean isNetworkEnabled
+    +Boolean canGetLocation
+    +Location location
+    +Double latitude
+    +Double longitude
+    -Int MIN_DISTANCE_CHANGE_FOR_UPDATES
+    -Long MIN_TIME_BW_UPDATES
+    #LocationManager locationManager
+    +stopUsingGPS()
+    +getLatitude()
+    +getLongitude()
+    +canGetLocation
+    +showSettingsAlert()
+    +getLocation()
+    +onBind()
+    +onLocationChanged()
+}
+
+class MainActivity {
+    -String ENABLE_BLUETOOTH_REQUEST_CODE
+    -String LOCATION_PERMISSION_REQUEST_CODE
+    -BluetoothAdapter bluetoothAdapter
+    -BluetoothLeScanner bleScanner
+    -ScanFilter scanFilter
+    -Boolean isScanning
+    -List scanResults
+    -ScanResultAdapter scanResultAdapter
+    -isLocationPermissionGranted
+    -ScanCallback scanCallback
+    -ConnectionEventListener connectionEventListener
+    +onCreate()
+    +onResume()
+    +onActivityResult()
+    +onRequestPermissionsResult()
+    -promptEnableBluetooth()
+    -startBleScan()
+    -stopBleScan()
+    -requestLocationPermission()
+    -setupRecyclerView()
+    -hasPermission()
+    -requestPermission()
+}
+class ScanResultsAdapter {
+    -List<ScanResult> items
+    -OnClickListener onClickListener
+    +onCreateViewHolder()
+    +getItemCount()
+    +onBindViewHolder()
+}
+class ViewHolder {
+    -View view
+    -OnClickListener onClickListener
+    +bind()
+}
+
+class BleOperationType {
+}
+
+class Connect {
+    +BluetoothDevice device
+}
+
+class Connect {
+    +BluetoothDevice device
+    +Context context
+}
+
+class Disconnect {
+    +BluetoothDevice device
+}
+
+class CharacteristicWrite {
+    +BluetoothDevice device
+    +UUID uuid
+    +Int writeType
+    +ByteArray payload
+    +equals()
+    +hashCode()
+}
+
+class CharacteristicRead {
+    +BluetoothDevice device
+    +UUID uuid
+}
+
+class DescriptorWrite {
+    +BluetoothDevice device
+    +UUID uuid
+    +Int writeType
+    +ByteArray payload
+    +equals()
+    +hashCode()
+}
+
+class DescriptorRead {
+    +BluetoothDevice device
+    +UUID uuid
+}
+
+class EnableNotifications {
+    +BluetoothDevice device
+    +UUID uuid
+}
+
+class DisableNotifications {
+    +BluetoothDevice device
+    +UUID uuid
+}
+
+class MtuRequest {
+    +BluetoothDevice device
+    +Int mtu
+}
+
+class ConnectionEventListener {
+    +onConnectionSetupComplete
+    +onDisconnect
+    +onDescriptorRead
+    +onDescriptorWrite
+    +onCharacteristicChanged
+    +onCharacteristicRead
+    +onCharacteristicWrite
+    +onNotificationsEnabled
+    +onNotificationsDisabled
+    +onMtuChanged
+}
+class ConnectionManager {
+    -Int GATT_MIN_MTU_SIZE
+    -Int GATT_MAX_MTU_SIZE
+    -Double longitude
+    -Double latitude
+    -MutableSet<WeakReference<ConnectionEventListener>> listeners
+    -ConcurrentHashMap<BluetoothDevice, BluetoothGatt> deviceGattMap
+    -ConcurrentLinkedQueue<BleOperationType> operationQueue
+    -BleOperationType pendingOperation
+    +String lockerState
+    +Boolean authState
+    +Double lon
+    +Double lat
+    -BluetoothGattCallback callback
+    -BroadcastReceiver broadcastReceiver
+    +servicesOnDevice()
+    +listenToBondStateChanges()
+    +registerListener()
+    +unregisterListener()
+    +connect()
+    +teardownConnection()
+    +readCharacteristic()
+    +writeCharacteristic()
+    -readDescriptor()
+    -writeDescriptor()
+    -enableNotifications()
+    -disableNotifications()
+    -requestMtu()
+    -readLockerCharacteristic()
+    -writeLockerCharacteristic()
+    -writeAuthCharacteristic()
+    -readAuthCharacteristic()
+    -enqueueOperation()
+    -signalEndOfOperation()
+    -doNextOperation()
+    -getLockerStatusButtonText()
+    -getAuthStatus()
+    -isConnected()
+}
+
+class Constants {
+   +String CCC_DESCRIPTOR_UUID
+   +UUID CLIENT_CONFIG_UUID
+   +UUID LOCKER_SERVICE_UUID
+   +UUID CHARACTERISTIC_LOCKER_UUID
+   +UUID CHARACTERISTIC_AUTH_LOCKER_UUID
+   +String UNLOCKED
+   +String LOCKED
+   +String ACCESS_DENIED
+   +String ACCESS_GRANTED
+   +String MAILBOX_LOCKED
+   +String MAILBOX_UNLOCKED
+}
+class AppCompatActivity {
+}
+
+class Service {
+}
+
+class RecyclerView.Adapter {
+}
+
+interface OnMapReadyCallback {
+}
+
+interface LocationListener {
+}
+
+BleOperationsActivity <|-- AppCompatActivity
+BleOperationsActivity <|-- OnMapReadyCallback
+MainActivity <|-- AppCompatActivity
+GpsTracker <|-- Service
+GpsTracker <|-- LocationListener
+ScanResultsAdapter <|-- RecyclerView.Adapter
+Connect <|-- BleOperationType
+Disconnect <|-- BleOperationType
+CharacteristicWrite <|-- BleOperationType
+CharacteristicRead <|-- BleOperationType
+DescriptorWrite <|-- BleOperationType
+DescriptorRead <|-- BleOperationType
+EnableNotifications <|-- BleOperationType
+DisableNotifications <|-- BleOperationType
+MtuRequest <|-- BleOperationType
+ScanResultsAdapter *-- ViewHolder
+ConnectionManager *-- BleOperationType
+ConnectionManager *-- ConnectionEventListener
+BleOperationsActivity *-- ConnectionEventListener
+MainActivity *-- ScanResultsAdapter
+MainActivity *-- ScanResultsAdapter
+BleOperationsActivity o-- Constants
+MainActivity o-- Constants
+ConnectionManager o-- Constants
+
+@enduml

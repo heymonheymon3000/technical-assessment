@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/class-diagram
+class EP1MailboxProfile {
+'-int dsds
+'#String
+'+String
+createTimeService(): BluetoothGattService
+}
+
+class MainActivity {
+    -TextView lockerStatusView
+    -BluetoothManager bluetoothManager
+    -BluetoothGattServer bluetoothGattServer
+    -Set<BluetoothDevice> registeredDevices
+    -String passcode
+    -String lockerState
+    -String authState
+    -BroadcastReceiver bluetoothReceiver
+    -AdvertiseCallback advertiseCallback
+    -BluetoothGattServerCallback gattServerCallback
+    +onCreate()
+    +onDestroy()
+    -checkBluetoothSupport()
+    -startAdvertising()
+    -stopAdvertising()
+    -startServer()
+    -stopServer()
+    -notifyRegisteredDevicesLocker()
+    -notifyRegisteredDevicesAuth()
+}
+
+class Constants {
+   +String CCC_DESCRIPTOR_UUID
+   +UUID CLIENT_CONFIG_UUID
+   +UUID LOCKER_SERVICE_UUID
+   +UUID CHARACTERISTIC_LOCKER_UUID
+   +UUID CHARACTERISTIC_AUTH_LOCKER_UUID
+   +String UNLOCKED
+   +String LOCKED
+   +String ACCESS_DENIED
+   +String ACCESS_GRANTED
+   +String MAILBOX_LOCKED
+   +String MAILBOX_UNLOCKED
+}
+
+class AppCompatActivity {
+}
+MainActivity <|-- AppCompatActivity
+MainActivity o-- EP1MailboxProfile
+MainActivity o-- Constants
+@enduml

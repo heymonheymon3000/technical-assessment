@@ -37,9 +37,9 @@ class MainActivity : AppCompatActivity() {
     private val registeredDevices = mutableSetOf<BluetoothDevice>()
 
     companion object {
-        private const val PASSCODE = "Authentication: 1234"
+        private const val passcode = "Authentication: 1234"
         private var lockState: String = LOCKED
-        private var authResponse: String = ACCESS_DENIED
+        private var authState: String = ACCESS_DENIED
     }
 
     private val bluetoothReceiver = object : BroadcastReceiver() {
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "BluetoothDevice DISCONNECTED: $device")
                 registeredDevices.remove(device)
-                authResponse =  ACCESS_DENIED
+                authState =  ACCESS_DENIED
             }
         }
 
@@ -97,13 +97,13 @@ class MainActivity : AppCompatActivity() {
                         notifyRegisteredDevicesLocker(lockState)
                     } else if(CHARACTERISTIC_AUTH_LOCKER_UUID == it) {
                         if(String(value).startsWith("Authentication:")) {
-                            authResponse = if(String(value) == PASSCODE) {
+                            authState = if(String(value) == passcode) {
                                 ACCESS_GRANTED
                             } else {
                                 ACCESS_DENIED
                             }
                         }
-                        notifyRegisteredDevicesAuth(authResponse)
+                        notifyRegisteredDevicesAuth(authState)
                     }
                 }
             }
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                         device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
-                        0, authResponse.toByteArray())
+                        0, authState.toByteArray())
                 }
                 else -> {
                     Log.w(TAG, "Invalid Characteristic Read: " + characteristic.uuid)
@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "Subscribe device to notifications: $device")
                     registeredDevices.add(device)
                     notifyRegisteredDevicesLocker(lockState)
-                    notifyRegisteredDevicesAuth(authResponse)
+                    notifyRegisteredDevicesAuth(authState)
                 } else if (Arrays.equals(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE, value)) {
                     Log.d(TAG, "Unsubscribe device from notifications: $device")
                     registeredDevices.remove(device)
@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopServer() {
-        authResponse =  ACCESS_DENIED
+        authState =  ACCESS_DENIED
         bluetoothGattServer?.close()
     }
 

@@ -1,0 +1,23 @@
+@startuml
+    actor user
+    user -> ble_mailbox_central : Opens ble_mailbox_central
+    user  -> ble_mailbox_central : Request Scan
+    ble_mailbox_central -> user : Request for permissions
+    user  --> ble_mailbox_central : Permissions granted
+    ble_mailbox_central -> ble_mailbox_central : Scan for devices
+    user  -> ble_mailbox_central : Select ble_mailbox_perpherial
+    ble_mailbox_central  -> ble_mailbox_perpherial : Request connection
+    ble_mailbox_central  <-> ble_mailbox_perpherial : Connection handshaking
+    ble_mailbox_central  -> ble_mailbox_perpherial : Request state of locker
+    ble_mailbox_perpherial  --> ble_mailbox_central : Response state of locker
+    user  -> ble_mailbox_central : Sign in
+    ble_mailbox_central  -> ble_mailbox_perpherial : Sign in
+    ble_mailbox_perpherial  -> ble_mailbox_perpherial : Authenticate user
+    ble_mailbox_central  -> ble_mailbox_perpherial : Request state of authentication
+    ble_mailbox_perpherial  --> ble_mailbox_central : Response state of authentication
+    user  -> ble_mailbox_central : Request to change state of locker
+    ble_mailbox_central  -> ble_mailbox_perpherial : Request to change state of locker
+    ble_mailbox_perpherial  -> ble_mailbox_perpherial : Change state of locker
+    ble_mailbox_central  -> ble_mailbox_perpherial : Request state of locker
+    ble_mailbox_perpherial  --> ble_mailbox_central : Response state of locker
+@enduml

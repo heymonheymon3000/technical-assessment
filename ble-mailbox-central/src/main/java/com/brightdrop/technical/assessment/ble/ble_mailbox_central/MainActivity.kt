@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.ConnectionEventListener
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.ConnectionManager
+import com.brightdrop.technical.assessment.ble.common.BuildConfig
 import com.brightdrop.technical.assessment.ble.common.Constants.LOCKER_SERVICE_UUID
 import kotlinx.android.synthetic.main.activity_main.scan_button
 import kotlinx.android.synthetic.main.activity_main.scan_results_recycler_view
