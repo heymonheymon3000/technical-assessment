@@ -3,15 +3,12 @@ package com.brightdrop.technical.assessment.ble.ble_mailbox_central
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.CHARACTERISTIC_AUTH_LOCKER_UUID
-import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.CHARACTERISTIC_LOCKER_UUID
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -20,13 +17,17 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.ConnectionEventListener
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.ConnectionManager
+import com.brightdrop.technical.assessment.ble.common.Constants.ACCESS_DENIED
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_AUTH_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKED
+import com.brightdrop.technical.assessment.ble.common.Constants.UNLOCKED
 import kotlinx.android.synthetic.main.activity_ble_operations.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.anko.alert
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -57,9 +58,9 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
             CoroutineScope(IO).launch {
                 if(ConnectionManager.authState) {
                     if(ConnectionManager.lockerState == getString(R.string.mailbox_locked)) {
-                        ConnectionManager.writeLockerCharacteristic(device, "UNLOCKED")
+                        ConnectionManager.writeLockerCharacteristic(device, UNLOCKED)
                     } else {
-                        ConnectionManager.writeLockerCharacteristic(device, "LOCKED")
+                        ConnectionManager.writeLockerCharacteristic(device, LOCKED)
                     }
                     delay(500)
                     ConnectionManager.readLockerCharacteristic(device)
@@ -166,7 +167,7 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 } else if( characteristic.uuid ==  CHARACTERISTIC_AUTH_LOCKER_UUID ) {
                     ConnectionManager.authState = ConnectionManager.getAuthStatus(String(characteristic.value))
-                    if(String(characteristic.value) != "ACCESS_DENIED") {
+                    if(String(characteristic.value) != ACCESS_DENIED) {
                         CoroutineScope(Main).launch {
                             auth.visibility = View.GONE
                             toggle_btn.isEnabled = true

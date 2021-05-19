@@ -23,16 +23,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.ConnectionEventListener
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.ConnectionManager
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKER_SERVICE_UUID
 import kotlinx.android.synthetic.main.activity_main.scan_button
 import kotlinx.android.synthetic.main.activity_main.scan_results_recycler_view
 import org.jetbrains.anko.alert
 import timber.log.Timber
-import java.util.UUID
 
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val LOCATION_PERMISSION_REQUEST_CODE = 2
 
-val LOCKER_SERVICE_UUID: UUID = UUID.fromString("00001805-0000-1000-8000-00805f9b34fb")
 
 class MainActivity : AppCompatActivity() {
 

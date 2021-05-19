@@ -3,10 +3,8 @@ package com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
+import com.brightdrop.technical.assessment.ble.common.Constants.CCC_DESCRIPTOR_UUID
 import java.util.UUID
-
-/** UUID of the Client Characteristic Configuration Descriptor (0x2902). */
-const val CCC_DESCRIPTOR_UUID = "00002902-0000-1000-8000-00805F9B34FB"
 
 fun BluetoothGatt.findCharacteristic(uuid: UUID): BluetoothGattCharacteristic? {
     services?.forEach { service ->

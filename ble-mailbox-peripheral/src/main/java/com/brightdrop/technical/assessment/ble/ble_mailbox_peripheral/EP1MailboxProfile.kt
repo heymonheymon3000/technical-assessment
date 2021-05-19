@@ -4,14 +4,12 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattCharacteristic.*
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothGattService
-import java.util.*
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_AUTH_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CLIENT_CONFIG_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKER_SERVICE_UUID
 
 object EP1MailboxProfile {
-    val LOCKER_SERVICE_UUID: UUID = UUID.fromString("00001805-0000-1000-8000-00805f9b34fb")
-    val CLIENT_CONFIG_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-    val CHARACTERISTIC_LOCKER_UUID: UUID = UUID.fromString("31517c58-66bf-470c-b662-e352a6c80cba")
-    val CHARACTERISTIC_AUTH_LOCKER_UUID: UUID = UUID.fromString("31517c59-66bf-470c-b662-e352a6c80cba")
-
     fun createTimeService(): BluetoothGattService {
         val service = BluetoothGattService(
                 LOCKER_SERVICE_UUID,

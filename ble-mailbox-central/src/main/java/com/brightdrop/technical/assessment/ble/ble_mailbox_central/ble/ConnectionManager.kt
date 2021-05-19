@@ -13,9 +13,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.*
-import com.brightdrop.technical.assessment.ble.ble_mailbox_central.LOCKER_SERVICE_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CCC_DESCRIPTOR_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_AUTH_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CLIENT_CONFIG_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKER_SERVICE_UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -28,11 +31,6 @@ import kotlin.properties.Delegates
 
 private const val GATT_MIN_MTU_SIZE = 23
 private const val GATT_MAX_MTU_SIZE = 517
-
-val CHARACTERISTIC_LOCKER_UUID: UUID = UUID.fromString("31517c58-66bf-470c-b662-e352a6c80cba")
-val CLIENT_CONFIG_UUID: UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
-val CHARACTERISTIC_AUTH_LOCKER_UUID: UUID = UUID.fromString("31517c59-66bf-470c-b662-e352a6c80cba")
-
 private var longitude: Double = -84.387985
 private var latitude: Double = 33.748997
 
@@ -45,8 +43,6 @@ object ConnectionManager {
     var lockerState: String by Delegates.observable("MAILBOX LOCKED") {
             property, oldValue, newValue ->
         println("${property.name}: $oldValue -> $newValue")
-
-        Log.i("Terry", "${property.name}: $oldValue -> $newValue")
     }
 
     var authState: Boolean by Delegates.observable(false) {

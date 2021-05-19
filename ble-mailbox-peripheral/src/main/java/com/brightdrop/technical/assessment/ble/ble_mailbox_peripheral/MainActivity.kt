@@ -16,7 +16,13 @@ import android.util.Log
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.brightdrop.technical.assessment.ble.ble_mailbox_peripheral.EP1MailboxProfile.CHARACTERISTIC_AUTH_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.ACCESS_DENIED
+import com.brightdrop.technical.assessment.ble.common.Constants.ACCESS_GRANTED
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_AUTH_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_LOCKER_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.CLIENT_CONFIG_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKED
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKER_SERVICE_UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -31,10 +37,8 @@ class MainActivity : AppCompatActivity() {
     private val registeredDevices = mutableSetOf<BluetoothDevice>()
 
     companion object {
-        private val PASSCODE = "Authentication: 1234"
-        private val ACCESS_GRANTED = "ACCESS_GRANTED"
-        private val ACCESS_DENIED = "ACCESS_DENIED"
-        private var lockState: String = "LOCKED"
+        private const val PASSCODE = "Authentication: 1234"
+        private var lockState: String = LOCKED
         private var authResponse: String = ACCESS_DENIED
     }
 
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "BluetoothDevice DISCONNECTED: $device")
                 registeredDevices.remove(device)
-                authResponse =  "ACCESS_DENIED"
+                authResponse =  ACCESS_DENIED
             }
         }
 
@@ -85,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
             value?.let {
                 characteristic?.uuid.let {
-                    if (EP1MailboxProfile.CHARACTERISTIC_LOCKER_UUID == it) {
+                    if (CHARACTERISTIC_LOCKER_UUID == it) {
                         lockState = String(value)
                         CoroutineScope(Main).launch {
                             lockerStatusView.text = lockState
@@ -109,26 +113,30 @@ class MainActivity : AppCompatActivity() {
                 device: BluetoothDevice, requestId: Int, offset: Int,
                 characteristic: BluetoothGattCharacteristic) {
 
-            if(EP1MailboxProfile.CHARACTERISTIC_LOCKER_UUID == characteristic.uuid) {
-                bluetoothGattServer?.sendResponse(
+            when {
+                CHARACTERISTIC_LOCKER_UUID == characteristic.uuid -> {
+                    bluetoothGattServer?.sendResponse(
                         device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0, lockState.toByteArray())
-            } else if(CHARACTERISTIC_AUTH_LOCKER_UUID == characteristic.uuid) {
-                bluetoothGattServer?.sendResponse(
-                    device,
-                    requestId,
-                    BluetoothGatt.GATT_SUCCESS,
-                    0, authResponse.toByteArray())
-            } else {
-                Log.w(TAG, "Invalid Characteristic Read: " + characteristic.uuid)
-                bluetoothGattServer?.sendResponse(
+                }
+                CHARACTERISTIC_AUTH_LOCKER_UUID == characteristic.uuid -> {
+                    bluetoothGattServer?.sendResponse(
+                        device,
+                        requestId,
+                        BluetoothGatt.GATT_SUCCESS,
+                        0, authResponse.toByteArray())
+                }
+                else -> {
+                    Log.w(TAG, "Invalid Characteristic Read: " + characteristic.uuid)
+                    bluetoothGattServer?.sendResponse(
                         device,
                         requestId,
                         BluetoothGatt.GATT_FAILURE,
                         0,
                         null)
+                }
             }
         }
 
@@ -136,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 device: BluetoothDevice, requestId: Int, offset: Int,
                 descriptor: BluetoothGattDescriptor
         ) {
-            if (EP1MailboxProfile.CLIENT_CONFIG_UUID == descriptor.uuid) {
+            if (CLIENT_CONFIG_UUID == descriptor.uuid) {
                 Log.d(TAG, "Config descriptor read")
                 val returnValue = if (registeredDevices.contains(device)) {
                     BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
@@ -166,11 +174,10 @@ class MainActivity : AppCompatActivity() {
                 descriptor: BluetoothGattDescriptor,
                 preparedWrite: Boolean, responseNeeded: Boolean,
                 offset: Int, value: ByteArray) {
-            if (EP1MailboxProfile.CLIENT_CONFIG_UUID == descriptor.uuid) {
+            if (CLIENT_CONFIG_UUID == descriptor.uuid) {
                 if (Arrays.equals(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE, value)) {
                     Log.d(TAG, "Subscribe device to notifications: $device")
                     registeredDevices.add(device)
-                    // TODO: TERRY
                     notifyRegisteredDevicesLocker(lockState)
                     notifyRegisteredDevicesAuth(authResponse)
                 } else if (Arrays.equals(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE, value)) {
@@ -268,7 +275,7 @@ class MainActivity : AppCompatActivity() {
             val data = AdvertiseData.Builder()
                     .setIncludeDeviceName(true)
                     .setIncludeTxPowerLevel(false)
-                    .addServiceUuid(ParcelUuid(EP1MailboxProfile.LOCKER_SERVICE_UUID))
+                    .addServiceUuid(ParcelUuid(LOCKER_SERVICE_UUID))
                     .build()
 
             it.startAdvertising(settings, data, advertiseCallback)
@@ -299,8 +306,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val lockerCharacteristic: BluetoothGattCharacteristic? = bluetoothGattServer
-                ?.getService(EP1MailboxProfile.LOCKER_SERVICE_UUID)
-                ?.getCharacteristic(EP1MailboxProfile.CHARACTERISTIC_LOCKER_UUID)
+                ?.getService(LOCKER_SERVICE_UUID)
+                ?.getCharacteristic(CHARACTERISTIC_LOCKER_UUID)
 
         Log.i(TAG, "Sending update to ${registeredDevices.size} subscribers")
         for (device in registeredDevices) {
@@ -315,7 +322,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val authCharacteristic: BluetoothGattCharacteristic? = bluetoothGattServer
-            ?.getService(EP1MailboxProfile.LOCKER_SERVICE_UUID)
+            ?.getService(LOCKER_SERVICE_UUID)
             ?.getCharacteristic(CHARACTERISTIC_AUTH_LOCKER_UUID)
 
         Log.i(TAG, "Sending update to ${registeredDevices.size} subscribers")
