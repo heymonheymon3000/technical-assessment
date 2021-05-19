@@ -31,9 +31,33 @@ To get a local copy up and running follow the steps below.
 * Based on the instructions it looks I need to show the location of the user not track the location of EP1
 
 ## Screen shots
-![](docs/uml/sequence_diagram.png "Sequence Diagram")
 
+#### Initial screen of client
+![image](screenshots/client-initial-screen.png)
 
+#### Initial screen of server
+![](screenshots/server-locked-mailbox.png)
+
+#### User clicked Start Scan and permissions request pop up
+![image](screenshots/client-ask-permissons.png)
+
+#### Scan results
+![image](screenshots/afterscan-results.png)
+
+#### User clicked the device to connect
+![image](screenshots/client-after-conection.png)
+
+#### User is authenticated
+![image](screenshots/client_enter_passcode.png)
+
+#### User clicked the device to connect
+![image](screenshots/client-after-login.png)
+
+#### Mailbox shows unlocked on client
+![image](screenshots/client-unlocked-mailbox.png)
+
+#### Mailbox unlocked on server
+![](screenshots/server-unlocked.png)
 
 ## UML Diagrams
 #### Sequence Diagram
