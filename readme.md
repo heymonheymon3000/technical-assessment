@@ -10,8 +10,6 @@ You’re part of a new and exciting project. The project will allow customers to
    2. Authenticate user
    3. Send unlock command
 
-
-
 ## Getting Started
 To get a local copy up and running follow the steps below.
 
@@ -27,16 +25,13 @@ To get a local copy up and running follow the steps below.
 2. Build and install ble-mailbox-central (client) on a device
 3. Build and install ble-mailbox-perpherial (server) on a separate device
 
-
-### APK's
-<a href="apks/ble-mailbox-central-debug.apk" download>Click to Download ble-mailbox-central</a>
-
-<a href="apks/ble-mailbox-peripheral-debug.apk" download>Click to Download ble-mailbox-perpheral</a>
-
+### Assumptions
+* When scanning, filter results to my mailbox only.
+* For the ble-mailbox-central use any device Android 10 or lower, it seems like it does pick up devices
+* Based on the instructions it looks I need to show the location of the user not track the location of EP1
 
 ## Screen shots
-
-
+![](docs/uml/sequence_diagram.png "Sequence Diagram")
 
 
 ## UML Diagrams
@@ -46,19 +41,3 @@ To get a local copy up and running follow the steps below.
 ![](docs/uml/ble_mailbox_perpherial_class_diagram.png "Peripheral Class Diagram")
 #### Central Class Diagram
 ![](docs/uml/ble_mailbox_central_class_diagram.png "Central Class Diagram")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
