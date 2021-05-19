@@ -21,6 +21,7 @@ import com.brightdrop.technical.assessment.ble.common.Constants.ACCESS_DENIED
 import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_AUTH_LOCKER_UUID
 import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_LOCKER_UUID
 import com.brightdrop.technical.assessment.ble.common.Constants.LOCKED
+import com.brightdrop.technical.assessment.ble.common.Constants.MAILBOX_LOCKED
 import com.brightdrop.technical.assessment.ble.common.Constants.UNLOCKED
 import kotlinx.android.synthetic.main.activity_ble_operations.*
 import kotlinx.coroutines.CoroutineScope
@@ -57,15 +58,15 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
         toggle_btn.setOnClickListener {
             CoroutineScope(IO).launch {
                 if(ConnectionManager.authState) {
-                    if(ConnectionManager.lockerState == getString(R.string.mailbox_locked)) {
+                    if(ConnectionManager.lockerState == MAILBOX_LOCKED) {
                         ConnectionManager.writeLockerCharacteristic(device, UNLOCKED)
                     } else {
                         ConnectionManager.writeLockerCharacteristic(device, LOCKED)
                     }
-                    delay(500)
+                    delay(500) // before we read lets wait 500 ms to let the write complete
                     ConnectionManager.readLockerCharacteristic(device)
                 } else {
-                    log("You are not auth!!!")
+                    log("You are not authenticated! Please sign in.")
                 }
             }
         }
@@ -78,21 +79,17 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
                 R.style.AppTheme
             )
             alertDialogBuilder.setView(promptsView)
-
             val userInput = promptsView
                 .findViewById<View>(R.id.editTextDialogUserInput) as EditText
-
             alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("OK") { dialog, id ->
                     ConnectionManager.writeAuthCharacteristic(device,
                         authenticationFormat.format(userInput.text.toString()))
-
                     CoroutineScope(IO).launch {
-                        delay(500)
+                        delay(500) // before we read lets wait 500 ms to let the write complete
                         ConnectionManager.readAuthCharacteristic(device)
                     }
-
                     dialog.dismiss()
                 }
                 .setNegativeButton(
@@ -169,7 +166,7 @@ class BleOperationsActivity : AppCompatActivity(), OnMapReadyCallback {
                     ConnectionManager.authState = ConnectionManager.getAuthStatus(String(characteristic.value))
                     if(String(characteristic.value) != ACCESS_DENIED) {
                         CoroutineScope(Main).launch {
-                            auth.visibility = View.GONE
+                            auth.visibility = View.INVISIBLE
                             toggle_btn.isEnabled = true
                         }
                     }

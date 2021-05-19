@@ -14,11 +14,15 @@ import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import com.brightdrop.technical.assessment.ble.ble_mailbox_central.ble.*
+import com.brightdrop.technical.assessment.ble.common.Constants.ACCESS_DENIED
 import com.brightdrop.technical.assessment.ble.common.Constants.CCC_DESCRIPTOR_UUID
 import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_AUTH_LOCKER_UUID
 import com.brightdrop.technical.assessment.ble.common.Constants.CHARACTERISTIC_LOCKER_UUID
 import com.brightdrop.technical.assessment.ble.common.Constants.CLIENT_CONFIG_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.LOCKED
 import com.brightdrop.technical.assessment.ble.common.Constants.LOCKER_SERVICE_UUID
+import com.brightdrop.technical.assessment.ble.common.Constants.MAILBOX_LOCKED
+import com.brightdrop.technical.assessment.ble.common.Constants.MAILBOX_UNLOCKED
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -40,7 +44,7 @@ object ConnectionManager {
     private val operationQueue = ConcurrentLinkedQueue<BleOperationType>()
     private var pendingOperation: BleOperationType? = null
 
-    var lockerState: String by Delegates.observable("MAILBOX LOCKED") {
+    var lockerState: String by Delegates.observable(MAILBOX_LOCKED) {
             property, oldValue, newValue ->
         println("${property.name}: $oldValue -> $newValue")
     }
@@ -649,16 +653,16 @@ object ConnectionManager {
         }
     }
 
-    fun getLockerStatusButtonText(lStatus: String) : String {
-        return if(lStatus == "LOCKED") {
-            "MAILBOX LOCKED"
+    fun getLockerStatusButtonText(status: String) : String {
+        return if(status == LOCKED) {
+            MAILBOX_LOCKED
         } else {
-            "MAILBOX UNLOCKED"
+            MAILBOX_UNLOCKED
         }
     }
 
-    fun getAuthStatus(lStatus: String) : Boolean {
-        return lStatus != "ACCESS DENIED"
+    fun getAuthStatus(status: String) : Boolean {
+        return status != ACCESS_DENIED
     }
 
     private val broadcastReceiver = object : BroadcastReceiver() {

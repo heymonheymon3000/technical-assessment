@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stopServer() {
-        authResponse =  "ACCESS_DENIED"
+        authResponse =  ACCESS_DENIED
         bluetoothGattServer?.close()
     }
 

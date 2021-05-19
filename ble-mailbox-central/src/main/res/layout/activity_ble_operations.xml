@@ -22,30 +22,23 @@
     android:layout_height="match_parent"
     tools:context=".BleOperationsActivity">
 
-    <LinearLayout
-        android:id="@+id/locker_container"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal"
+    <Button
+        android:id="@+id/auth"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/auth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sign In"
-            />
-
-        <Button
-            android:id="@+id/toggle_btn"
-            android:text="@string/mailbox_locked"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"/>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/toggle_btn"
+        android:text="@string/mailbox_locked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:enabled="false"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map_fragment_view"
@@ -55,7 +48,7 @@
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/locker_container"/>
+        app:layout_constraintTop_toBottomOf="@+id/toggle_btn"/>
 
     <LinearLayout
         app:layout_constraintTop_toBottomOf="@+id/map_fragment_view"
