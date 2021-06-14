@@ -59,19 +59,7 @@ To get a local copy up and running follow the steps below.
 #### Mailbox unlocked on server
 ![](screenshots/server-unlocked.png)
 -->
-
-| ble-mailbox-central (client)             |  ble-mailbox-perpherial (server) |
-:-------------------------:|:-------------------------:
-![image](screenshots/client-initial-screen.png)  |  ![](screenshots/server-locked-mailbox.png)
-![image](screenshots/client-ask-permissons.png)  |  ![](screenshots/server-locked-mailbox.png)
-![image](screenshots/afterscan-results.png)  |  ![](screenshots/server-locked-mailbox.png)
-![image](screenshots/client-after-conection.png) |  ![](screenshots/server-locked-mailbox.png)
-![image](screenshots/client_enter_passcode.png) |  ![](screenshots/server-locked-mailbox.png)
-![image](screenshots/client-after-login.png) |  ![](screenshots/server-locked-mailbox.png)
-![image](screenshots/client-unlocked-mailbox.png) |  ![](screenshots/server-unlocked.png)
-
-
-
+![](video/demo.gif)
 
 ## UML Diagrams
 #### Sequence Diagram
