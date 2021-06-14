@@ -31,11 +31,10 @@ To get a local copy up and running follow the steps below.
 * Based on the instructions it looks like I need to show the location of the user not track the location of EP1
 
 ## Demo
-### SM-G960U - ble-mailbox-central acts as a client and connects to ble-mailbox-peripheral via Bluetooth low energy (BLE).  After the connection is made, ble-mailbox-central must authenicate in order to lock/unlock ble-mailbox-peripheral mailbox (EP1).
+SM-G960U - ble-mailbox-central acts as a client and connects to ble-mailbox-peripheral via Bluetooth low energy (BLE).  After the connection is made, ble-mailbox-central must authenicate in order to lock/unlock ble-mailbox-peripheral mailbox (EP1).
 
-<br>
 
-### SM-G973U1 -  ble-mailbox-peripheral - This is the mailbox (EP1) that we will lock/unlock by using ble-mailbox-central once its authenicated.
+SM-G973U1 -  ble-mailbox-peripheral - This is the mailbox (EP1) that we will lock/unlock by using ble-mailbox-central once its authenicated.
 
 ![](video/demo.gif)
 
