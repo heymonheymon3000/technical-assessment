@@ -30,35 +30,13 @@ To get a local copy up and running follow the steps below.
 * For the ble-mailbox-central use any device Android 10 or lower, it seems like it does pick up devices
 * Based on the instructions it looks like I need to show the location of the user not track the location of EP1
 
-## Screen shots
-<!---
-#### Initial screen of client
-![image](screenshots/client-initial-screen.png)
+## Demo
+### SM-G960U - ble-mailbox-central acts as a client and connects to ble-mailbox-peripheral via Bluetooth low energy (BLE).  After the connection is made, ble-mailbox-central must authenicate in order to lock/unlock ble-mailbox-peripheral mailbox (EP1).
 
-#### Initial screen of server
-![](screenshots/server-locked-mailbox.png)
+<br>
 
-#### User clicked Start Scan and permissions request pop up
-![image](screenshots/client-ask-permissons.png)
+### SM-G973U1 -  ble-mailbox-peripheral - This is the mailbox (EP1) that we will lock/unlock by using ble-mailbox-central once its authenicated.
 
-#### Scan results
-![image](screenshots/afterscan-results.png)
-
-#### User clicked the device to connect
-![image](screenshots/client-after-conection.png)
-
-#### User is authenticated
-![image](screenshots/client_enter_passcode.png)
-
-#### User clicked the device to connect
-![image](screenshots/client-after-login.png)
-
-#### Mailbox shows unlocked on client
-![image](screenshots/client-unlocked-mailbox.png)
-
-#### Mailbox unlocked on server
-![](screenshots/server-unlocked.png)
--->
 ![](video/demo.gif)
 
 ## UML Diagrams
